@@ -401,6 +401,27 @@ input::placeholder { color: var(--text-faint); font-family: var(--font-sans); }
 .medicine-form h3 { margin: 0 0 4px; font-size: 14px; color: var(--text); }
 .medicine-form .demo-tag { margin-bottom: 12px; }
 
+/* ---------------- Dose configuration matrix (Medicines tab) ---------------- */
+/* #medicineForms keeps the .grid-3 class from index.html for layout-nothing
+   reasons other than markup reuse; this ID rule (higher specificity) makes
+   it a single full-width column so the wide matrix table isn't squeezed. */
+#medicineForms { grid-template-columns: 1fr; }
+
+.dose-matrix-card .empty-note { margin: 0 0 14px; }
+
+.dose-matrix { width: 100%; }
+.dose-matrix th:not(:first-child), .dose-matrix td:not(:first-child) { text-align: center; }
+.med-cell { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--text); }
+.mini-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 22px; height: 22px; padding: 0 5px;
+    border-radius: 6px; background: var(--surface-3); border: 1px solid var(--border);
+    color: var(--primary); font-size: 9.5px; font-weight: 800; font-family: var(--font-mono);
+    flex-shrink: 0;
+}
+.dose-cell { width: 84px; text-align: center; padding: 7px 6px; }
+input:disabled, .btn:disabled { opacity: .5; cursor: not-allowed; }
+
 .form-msg { font-size: 11.5px; margin-top: 8px; font-weight: 700; font-family: var(--font-mono); }
 .form-msg.ok { color: var(--success); }
 .form-msg.bad { color: var(--danger); }

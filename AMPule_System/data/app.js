@@ -290,86 +290,123 @@ async function pollHistory() {
 // Medicines / dose configuration
 // ---------------------------------------------------------------------------
 
-function medicineFormHtml(m) {
+// Shown when the dashboard can't reach the ESP32 (e.g. previewing this file
+// directly instead of through http://192.168.4.1) so the 3 medicines and
+// their 4-weight-category dose grid are still visible and editable — these
+// match the DEMO values the firmware seeds on first boot (storage_manager.cpp).
+const OFFLINE_DEMO_MEDICINES = [
+  { id: "PCM", name: "Paracetamol (PCM)", under40: 100, kg41to60: 200, kg61to80: 300, over81: 400 },
+  { id: "PAN", name: "Pantoprazole",      under40: 50,  kg41to60: 100, kg61to80: 150, over81: 200 },
+  { id: "RIF", name: "Rifampicin",        under40: 75,  kg41to60: 150, kg61to80: 225, over81: 300 },
+];
+
+const WEIGHT_FIELD_COLUMNS = [
+  { field: "under40",  label: "Under 40 kg" },
+  { field: "kg41to60", label: "41-60 kg" },
+  { field: "kg61to80", label: "61-80 kg" },
+  { field: "over81",   label: "81 kg+" },
+];
+
+function doseMatrixRowHtml(m) {
+  const cells = WEIGHT_FIELD_COLUMNS.map(
+    (col) =>
+      "<td><input type='number' min='0' step='1' class='dose-cell' data-id='" + m.id +
+      "' data-field='" + col.field + "' value='" + m[col.field] + "'></td>"
+  ).join("");
   return (
-    "<h3>" + m.name + "</h3>" +
-    "<div class='demo-tag'>DEMO CONFIGURATION</div>" +
-    "<div class='form-grid'>" +
-    field("Under 40 kg (mg)", m.id + "_under40", m.under40) +
-    field("41-60 kg (mg)", m.id + "_kg41to60", m.kg41to60) +
-    field("61-80 kg (mg)", m.id + "_kg61to80", m.kg61to80) +
-    field("81 kg+ (mg)", m.id + "_over81", m.over81) +
-    "</div>" +
-    "<div class='form-grid'>" +
-    "<div><label>Admin PIN</label><input type='password' id='" + m.id + "_pin' required></div>" +
-    "</div>" +
-    "<button class='btn primary' type='submit'>Save</button>" +
-    "<div class='form-msg' id='" + m.id + "_msg'></div>"
+    "<tr data-med-id='" + m.id + "'>" +
+    "<td class='med-cell'><span class='mini-badge'>" + m.id + "</span>" + m.name + "</td>" +
+    cells +
+    "</tr>"
   );
 }
 
-function field(label, id, value) {
-  return "<div><label for='" + id + "'>" + label + "</label>" +
-    "<input type='number' min='0' step='1' id='" + id + "' value='" + value + "' required></div>";
-}
-
-async function loadMedicines() {
-  try {
-    medicinesCache = await getJSON("/api/medicines");
-  } catch (e) {
-    $("medicineForms").innerHTML = "<p class='empty-note'>Unable to load medicines.</p>";
-    return;
-  }
-
+function renderDoseMatrix(medicines, isOffline) {
   const container = $("medicineForms");
   container.innerHTML = "";
 
-  medicinesCache.forEach((m) => {
-    const form = el("form", "card medicine-form", medicineFormHtml(m));
-    form.addEventListener("submit", (ev) => {
-      ev.preventDefault();
-      saveMedicine(m.id);
-    });
-    container.appendChild(form);
-  });
+  const card = el("div", "card dose-matrix-card");
+  card.innerHTML =
+    "<h2>Dose Configuration &mdash; " + medicines.length + " Medicines &times; " +
+    WEIGHT_FIELD_COLUMNS.length + " Weight Categories</h2>" +
+    (isOffline
+      ? "<p class='empty-note'>Not connected to the Ampule device &mdash; showing the firmware's default DEMO values. Connect to the <b>Ampule-System</b> Wi-Fi and reopen this page to load/save the live values.</p>"
+      : "") +
+    "<div class='table-wrap'><table class='dose-matrix'><thead><tr><th>Medicine</th>" +
+    WEIGHT_FIELD_COLUMNS.map((c) => "<th>" + c.label + " (mg)</th>").join("") +
+    "</tr></thead><tbody>" +
+    medicines.map(doseMatrixRowHtml).join("") +
+    "</tbody></table></div>" +
+    "<div class='form-grid' style='margin-top:14px; max-width:280px'>" +
+    "<div><label for='doseMatrixPin'>Admin PIN</label><input type='password' id='doseMatrixPin' " +
+    (isOffline ? "disabled" : "required") + "></div></div>" +
+    "<button class='btn primary' id='saveAllDosesBtn'" + (isOffline ? " disabled" : "") + ">Save All Changes</button>" +
+    "<div class='form-msg' id='doseMatrixMsg'></div>";
 
-  // Also refresh the "add ampule" medicine dropdown while we have the list.
-  const select = $("newMedicine");
-  if (select) {
-    select.innerHTML = "";
-    medicinesCache.forEach((m) => {
-      const opt = el("option", null, m.name);
-      opt.value = m.id;
-      select.appendChild(opt);
-    });
+  container.appendChild(card);
+
+  if (!isOffline) {
+    $("saveAllDosesBtn").addEventListener("click", () => saveAllDoses(medicines));
   }
 }
 
-async function saveMedicine(id) {
-  const msg = $(id + "_msg");
-  const body = {
-    id: id,
-    under40: Number($(id + "_under40").value),
-    kg41to60: Number($(id + "_kg41to60").value),
-    kg61to80: Number($(id + "_kg61to80").value),
-    over81: Number($(id + "_over81").value),
-    pin: $(id + "_pin").value,
-  };
+async function saveAllDoses(medicines) {
+  const msg = $("doseMatrixMsg");
+  const pin = $("doseMatrixPin").value;
 
-  if ([body.under40, body.kg41to60, body.kg61to80, body.over81].some((v) => isNaN(v) || v < 0)) {
-    msg.textContent = "Dose values must be non-negative numbers.";
+  const updates = medicines.map((m) => {
+    const body = { id: m.id, pin: pin };
+    WEIGHT_FIELD_COLUMNS.forEach((col) => {
+      const input = document.querySelector("input.dose-cell[data-id='" + m.id + "'][data-field='" + col.field + "']");
+      body[col.field] = Number(input.value);
+    });
+    return body;
+  });
+
+  const invalid = updates.some((b) =>
+    WEIGHT_FIELD_COLUMNS.some((col) => isNaN(b[col.field]) || b[col.field] < 0)
+  );
+  if (invalid) {
+    msg.textContent = "All 12 dose values must be non-negative numbers.";
     msg.className = "form-msg bad";
     return;
   }
 
+  msg.textContent = "Saving…";
+  msg.className = "form-msg";
+
   try {
-    await postJSON("/api/medicines", body);
-    msg.textContent = "Saved.";
+    for (const body of updates) {
+      await postJSON("/api/medicines", body);
+    }
+    msg.textContent = "Saved all " + updates.length + " medicines (" + (updates.length * WEIGHT_FIELD_COLUMNS.length) + " values).";
     msg.className = "form-msg ok";
   } catch (e) {
     msg.textContent = e.message;
     msg.className = "form-msg bad";
   }
+}
+
+function populateMedicineSelect(medicines) {
+  const select = $("newMedicine");
+  if (!select) return;
+  select.innerHTML = "";
+  medicines.forEach((m) => {
+    const opt = el("option", null, m.name);
+    opt.value = m.id;
+    select.appendChild(opt);
+  });
+}
+
+async function loadMedicines() {
+  try {
+    medicinesCache = await getJSON("/api/medicines");
+    renderDoseMatrix(medicinesCache, false);
+  } catch (e) {
+    medicinesCache = OFFLINE_DEMO_MEDICINES;
+    renderDoseMatrix(medicinesCache, true);
+  }
+  populateMedicineSelect(medicinesCache);
 }
 
 // ---------------------------------------------------------------------------
