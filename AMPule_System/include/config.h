@@ -38,7 +38,7 @@ static const uint8_t OLED_I2C_ADDR_CANDIDATES[] = { 0x3C, 0x3D };
 // ---------------------------------------------------------------------------
 // Wi-Fi Access Point (always on — this is how the dashboard is reached)
 // ---------------------------------------------------------------------------
-#define WIFI_AP_SSID_DEFAULT     "AMPule-System"
+#define WIFI_AP_SSID_DEFAULT     "Ampule-System"
 #define WIFI_AP_PASSWORD_DEFAULT "ampule1234"     // WPA2, min 8 chars
 #define WIFI_AP_IP               "192.168.4.1"
 #define HTTP_PORT                80

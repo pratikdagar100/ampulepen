@@ -1,7 +1,7 @@
 #ifndef AMPULE_VERSION_H
 #define AMPULE_VERSION_H
 
-#define FIRMWARE_NAME    "AMPule Verification & Dose Selection System"
+#define FIRMWARE_NAME    "Ampule Verification & Dose Selection System"
 #define FIRMWARE_VERSION "1.0.0"
 #define FIRMWARE_BUILD   __DATE__ " " __TIME__
 

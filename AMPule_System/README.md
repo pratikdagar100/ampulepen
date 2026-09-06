@@ -1,7 +1,7 @@
-# AMPule Verification & Dose Selection System — Firmware
+# Ampule Verification & Dose Selection System — Firmware
 
 A complete, working ESP32 firmware + local web dashboard implementing the
-AMPule prototype workflow: RFID ampule identification, verification
+Ampule prototype workflow: RFID ampule identification, verification
 (registration / expiry / used-status), weight-based DEMO dose lookup, an
 OLED UI, three physical buttons, and a self-hosted dashboard — with no
 laptop, Raspberry Pi, or Internet connection required after flashing.
@@ -50,7 +50,7 @@ This is the condensed path; each linked section has full detail.
    PN532 on the I2C bus, 3 buttons to GND with `INPUT_PULLUP`, no external
    resistors needed).
 2. **Install VS Code + the PlatformIO extension** (§15 Step 1).
-3. **Open the `AMPule_System/` folder** in VS Code — the one containing
+3. **Open the `Ampule_System/` folder** in VS Code — the one containing
    `platformio.ini` (§15 Step 2). PlatformIO will detect it automatically
    and offer to install the ESP32 platform + the 4 libraries the first
    time you build.
@@ -60,7 +60,7 @@ This is the condensed path; each linked section has full detail.
    `pio run`, `pio run --target upload`, `pio run --target uploadfs`).
 6. **Open the Serial Monitor at 115200 baud** and reset the board — you
    should see the full boot log ending in `[READY] System ready`.
-7. **Connect your phone/laptop to the `AMPule-System` Wi-Fi network**
+7. **Connect your phone/laptop to the `Ampule-System` Wi-Fi network**
    (password `ampule1234` unless you changed it) and open
    `http://192.168.4.1`.
 8. **Scan one of the 3 seeded demo tags** (or a real tag you register
@@ -191,7 +191,7 @@ These UIDs are placeholders. Register real tags from the dashboard's
 ## 6. Project structure
 
 ```
-AMPule_System/
+Ampule_System/
 ├── platformio.ini
 ├── include/
 │   ├── config.h        — all editable settings (Wi-Fi, timing, limits, file paths)
@@ -199,7 +199,7 @@ AMPule_System/
 │   ├── models.h         — shared enums/structs (state machine, dose profile, session)
 │   └── version.h
 ├── src/
-│   ├── AMPule_System.ino   — setup()/loop() only
+│   ├── Ampule_System.ino   — setup()/loop() only
 │   ├── system_manager.*    — the state machine; orchestrates every module below
 │   ├── rfid_manager.*      — DFR0231-H / PN532 (Adafruit_PN532), edge + removal detection
 │   ├── display_manager.*   — SSD1306 OLED screens
@@ -217,15 +217,15 @@ AMPule_System/
 ```
 
 > **PlatformIO note:** PlatformIO's default `src_dir` is `src/`, so
-> `AMPule_System.ino` lives inside `src/` alongside the `.cpp` files rather
+> `Ampule_System.ino` lives inside `src/` alongside the `.cpp` files rather
 > than at the project root — this is the standard, well-supported way to
 > mix a `.ino` entry point with `.cpp` implementation files under
 > PlatformIO. `include/` is auto-added to the compiler's include path.
 >
 > **Arduino IDE alternative:** Arduino IDE expects one flat sketch folder.
-> Create a folder named `AMPule_System`, copy `src/AMPule_System.ino` plus
+> Create a folder named `Ampule_System`, copy `src/Ampule_System.ino` plus
 > every `src/*.cpp`/`src/*.h` and every `include/*.h` directly into it
-> (flat, no subfolders), open `AMPule_System.ino`, install the libraries in
+> (flat, no subfolders), open `Ampule_System.ino`, install the libraries in
 > §8, and build/upload as normal — no code changes are required since all
 > `#include "x.h"` references resolve by filename.
 
@@ -306,13 +306,13 @@ fallback above, but is handled defensively), the system enters
 
 ## 10. Wi-Fi & the dashboard
 
-- **SSID:** `AMPule-System` (default; change in Settings tab or
+- **SSID:** `Ampule-System` (default; change in Settings tab or
   `config.h`)
 - **Password:** `ampule1234` (default — **change this**, it's WPA2 and
   world-readable in this repo)
 - **IP:** `192.168.4.1`, port `80`
 
-Connect a phone/tablet/laptop to the `AMPule-System` Wi-Fi network, then
+Connect a phone/tablet/laptop to the `Ampule-System` Wi-Fi network, then
 open **http://192.168.4.1** in a browser. No Internet connection is used
 or required for the dashboard itself — every asset (`index.html`,
 `style.css`, `app.js`) is served from the ESP32's own LittleFS, with zero
@@ -451,7 +451,7 @@ Install [Visual Studio Code](https://code.visualstudio.com/) and the
 **PlatformIO IDE** extension from the VS Code marketplace.
 
 ### Step 2 — Open the project
-`File → Open Folder…` → select `AMPule_System/` (the folder containing
+`File → Open Folder…` → select `Ampule_System/` (the folder containing
 `platformio.ini`).
 
 ### Step 3 — Connect the ESP32
@@ -474,7 +474,7 @@ PlatformIO sidebar → **esp32dev → Platform → Upload Filesystem Image**
 ### Step 7 — Reset and connect
 Press the ESP32's reset button (or unplug/replug USB). Open the Serial
 Monitor at **115200 baud** to watch the boot log, then connect a device
-to the `AMPule-System` Wi-Fi network and browse to `http://192.168.4.1`.
+to the `Ampule-System` Wi-Fi network and browse to `http://192.168.4.1`.
 
 ---
 
@@ -489,14 +489,14 @@ to the `AMPule-System` Wi-Fi network and browse to `http://192.168.4.1`.
    ready`.
 3. Confirm the OLED shows:
    ```
-   AMPule
+   Ampule
    SYSTEM READY
    INSERT AMPULE
    RFID READY
    ```
 4. Press UP/DOWN/ENTER individually while watching Serial — no crash, no
    spurious repeated triggers (debouncing works).
-5. Connect to Wi-Fi `AMPule-System`, browse to `http://192.168.4.1`.
+5. Connect to Wi-Fi `Ampule-System`, browse to `http://192.168.4.1`.
    Confirm the **Dashboard** tab loads, all four status dots are green
    (ESP32 / RFID / OLED / DATABASE), and the ampule card shows "INSERT
    AMPULE".
@@ -561,7 +561,7 @@ Confirm wiring to GPIO 25/26/33 with the other leg to GND, and that
 `ButtonManager::begin()` — no external pull-ups needed or wanted).
 
 **Dashboard won't load**
-- Confirm you're connected to the `AMPule-System` Wi-Fi network, not your
+- Confirm you're connected to the `Ampule-System` Wi-Fi network, not your
   home/office network.
 - Browse to `http://192.168.4.1` exactly (not `https://`).
 - If you flashed firmware but see a blank page or 404s for `style.css`/

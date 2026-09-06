@@ -1,5 +1,5 @@
 // ============================================================================
-// AMPule Verification & Dose Selection System
+// Ampule Verification & Dose Selection System
 // ESP32 + DFR0231-H (PN532) + I2C OLED + 3 buttons + local Wi-Fi dashboard
 //
 // PROTOTYPE / ACADEMIC DEMONSTRATION ONLY.

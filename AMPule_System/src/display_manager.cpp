@@ -59,7 +59,7 @@ void showBootMessage(const String &line) {
     display.clearDisplay();
     display.setTextSize(1);
     display.setCursor(0, 0);
-    display.println("AMPule SYSTEM");
+    display.println("Ampule SYSTEM");
     display.setCursor(0, 20);
     display.println(line);
     display.display();
@@ -70,7 +70,7 @@ void showReady() {
     display.clearDisplay();
     display.setTextSize(2);
     display.setCursor(0, 0);
-    display.println("AMPule");
+    display.println("Ampule");
     display.setTextSize(1);
     display.setCursor(0, 20);
     display.println("SYSTEM READY");

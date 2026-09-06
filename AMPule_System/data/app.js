@@ -1,4 +1,4 @@
-// AMPule System dashboard — vanilla JS, no external dependencies.
+// Ampule System dashboard — vanilla JS, no external dependencies.
 // Polls the ESP32's REST API and mirrors OLED/physical device state.
 
 const STATUS_POLL_MS = 750;
