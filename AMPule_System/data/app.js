@@ -29,6 +29,13 @@ const WEIGHT_LABELS = ["UNDER 40 kg", "41-60 kg", "61-80 kg", "81 kg+"];
 let lastHistorySignature = "";
 let medicinesCache = [];
 
+// Small inline icons — no icon font/image files, keeps LittleFS payload tiny.
+const ICON = {
+  check: '<svg class="ic" viewBox="0 0 20 20" fill="none"><path d="M4.5 10.5l3.5 3.5L15.5 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  cross: '<svg class="ic" viewBox="0 0 20 20" fill="none"><path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  alert: '<svg class="ic" viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 16.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10.3 3.9 2.5 17a1.8 1.8 0 0 0 1.6 2.7h15.8a1.8 1.8 0 0 0 1.6-2.7L13.7 3.9a1.8 1.8 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+};
+
 // ---------------------------------------------------------------------------
 // Small helpers
 // ---------------------------------------------------------------------------
@@ -93,14 +100,12 @@ function renderProcessIndicator(state) {
   const currentStep = STATE_TO_STEP.hasOwnProperty(state) ? STATE_TO_STEP[state] : -1;
 
   STEPS.forEach((step, i) => {
-    const div = el("div", "step", step.label);
-    if (isError) {
-      // no step highlighted during an error — the ampule card explains why
-    } else if (i < currentStep) {
-      div.classList.add("done");
-    } else if (i === currentStep) {
-      div.classList.add("active");
-    }
+    const isDone = !isError && i < currentStep;
+    const isActive = !isError && i === currentStep;
+    const marker = isDone ? ICON.check : isActive ? "<span class='step-dot'></span>" : "";
+    const div = el("div", "step", marker + "<span class='step-text'>" + step.label + "</span>");
+    if (isDone) div.classList.add("done");
+    if (isActive) div.classList.add("active");
     container.appendChild(div);
   });
 }
@@ -140,7 +145,7 @@ function renderAmpuleCard(status) {
 
   if (status.isError) {
     const banner = el("div", "error-banner");
-    banner.innerHTML = "<div>" + status.errorTitle + "</div><div class='msg'>" + status.errorMessage + "</div>";
+    banner.innerHTML = "<div class='title'>" + ICON.alert + " " + status.errorTitle + "</div><div class='msg'>" + status.errorMessage + "</div>";
     card.appendChild(banner);
     return;
   }
@@ -164,11 +169,13 @@ function renderAmpuleCard(status) {
     card.appendChild(row);
   });
 
+  const checkRow = (ok, label) =>
+    "<li class='" + (ok ? "check-ok" : "check-bad") + "'>" + (ok ? ICON.check : ICON.cross) + " " + label + "</li>";
   const list = el("ul", "checklist");
   list.innerHTML =
-    "<li class='" + (status.ampuleVerified ? "check-ok" : "check-bad") + "'>" + (status.ampuleVerified ? "✓" : "✗") + " VERIFIED</li>" +
-    "<li class='" + (!status.expired ? "check-ok" : "check-bad") + "'>" + (!status.expired ? "✓" : "✗") + " NOT EXPIRED</li>" +
-    "<li class='" + (!status.used ? "check-ok" : "check-bad") + "'>" + (!status.used ? "✓" : "✗") + " NOT USED</li>";
+    checkRow(status.ampuleVerified, "VERIFIED") +
+    checkRow(!status.expired, "NOT EXPIRED") +
+    checkRow(!status.used, "NOT USED");
   card.appendChild(list);
 }
 
@@ -183,8 +190,9 @@ function renderWeightCard(status) {
 
   const grid = el("div", "weight-grid");
   WEIGHT_LABELS.forEach((label, i) => {
-    const opt = el("div", "weight-option", label);
-    if (status.weightSelected && status.weightIndex === i) opt.classList.add("selected");
+    const selected = status.weightSelected && status.weightIndex === i;
+    const opt = el("div", "weight-option" + (selected ? " selected" : ""),
+      (selected ? "<span class='wt-check'>" + ICON.check + "</span>" : "") + label);
     grid.appendChild(opt);
   });
   card.appendChild(grid);
@@ -193,7 +201,7 @@ function renderWeightCard(status) {
     const dose = el("div", "dose-display");
     dose.innerHTML =
       "<div class='dose-value'>" + status.dose + " <span class='dose-unit'>mg</span></div>" +
-      "<div class='demo-tag'>DEMO VALUE</div>";
+      "<div class='demo-tag'>" + ICON.alert + " DEMO VALUE</div>";
     card.appendChild(dose);
   }
 
@@ -227,6 +235,13 @@ async function pollStatus() {
 // Activity log (dashboard tab) + full history (history tab)
 // ---------------------------------------------------------------------------
 
+function logDotClass(status) {
+  const s = (status || "").toLowerCase();
+  if (s.indexOf("rejected") !== -1) return "bad";
+  if (s.indexOf("verified") !== -1 || s.indexOf("used") !== -1) return "ok";
+  return "";
+}
+
 function renderLogList(container, entries, limit) {
   container.innerHTML = "";
   if (!entries.length) {
@@ -235,7 +250,9 @@ function renderLogList(container, entries, limit) {
   }
   entries.slice(0, limit).forEach((h) => {
     const li = el("li");
-    li.innerHTML = "<span class='log-time'>" + h.time + "</span><span>" +
+    li.innerHTML =
+      "<span class='log-dot " + logDotClass(h.status) + "'></span>" +
+      "<span class='log-time'>" + h.time + "</span><span>" +
       h.status + (h.medicine && h.medicine !== "-" ? " &mdash; " + h.medicine : "") + "</span>";
     container.appendChild(li);
   });
