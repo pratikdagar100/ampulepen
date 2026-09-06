@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AMPule System</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="app">
+
+  <div class="demo-strip">
+    <div class="left">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 16.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10.3 3.9 2.5 17a1.8 1.8 0 0 0 1.6 2.7h15.8a1.8 1.8 0 0 0 1.6-2.7L13.7 3.9a1.8 1.8 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      DEMO MODE &mdash; Clinical dosing not implemented
+    </div>
+    <div class="right"><span class="blink-dot"></span><span>SOFTWARE PROTOTYPE &mdash; NOT A MEDICAL DEVICE</span></div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 2h6M10 2v5.2a3 3 0 0 1-.6 1.8L6.8 12.8A4 4 0 0 0 6 15.2V19a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-3.8a4 4 0 0 0-.8-2.4l-2.6-3.8a3 3 0 0 1-.6-1.8V2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 14.5h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div class="brand-title-row"><h1>AMPULE SYSTEM</h1><span class="version-chip mono" id="fwVersionChip">v--</span></div>
+        <p>Ampule Verification &amp; Dose Selection System</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="theme-toggle" id="themeToggle" title="Toggle dark / light theme" aria-label="Toggle theme">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="dashboard">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg>
+      Dashboard
+    </button>
+    <button class="tab" data-tab="history">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 1 0 3-6.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3 4v5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8v4l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      History
+    </button>
+    <button class="tab" data-tab="medicines">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Medicines
+    </button>
+    <button class="tab" data-tab="settings">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 13a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V19a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H4a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.5V4a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.5 1H20a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      Settings
+    </button>
+  </nav>
+
+  <main>
+
+    <!-- ============================ DASHBOARD ============================ -->
+    <section id="tab-dashboard" class="tab-panel active">
+
+      <div class="ribbon" id="hardwareRibbon">
+        <div class="ribbon-chip">
+          <div class="row1"><span class="label">ESP32 Core</span><span class="status" id="rbEspStatus"><span class="dot" id="dotEsp"></span>--</span></div>
+          <div class="row2"><span class="value mono" id="rbEspValue">--</span><span class="sub" id="rbEspSub">--</span></div>
+        </div>
+        <div class="ribbon-chip">
+          <div class="row1"><span class="label">RFID Reader</span><span class="status" id="rbRfidStatus"><span class="dot" id="dotRfid"></span>--</span></div>
+          <div class="row2"><span class="value mono">PN532 &middot; I2C</span><span class="sub">DFR0231-H</span></div>
+        </div>
+        <div class="ribbon-chip">
+          <div class="row1"><span class="label">OLED Display</span><span class="status" id="rbOledStatus"><span class="dot" id="dotOled"></span>--</span></div>
+          <div class="row2"><span class="value mono">SSD1306</span><span class="sub">0x3C / 0x3D</span></div>
+        </div>
+        <div class="ribbon-chip">
+          <div class="row1"><span class="label">Storage</span><span class="status" id="rbDbStatus"><span class="dot" id="dotDb"></span>--</span></div>
+          <div class="row2"><span class="value mono">LittleFS</span><span class="sub">JSON DB</span></div>
+        </div>
+        <div class="ribbon-chip">
+          <div class="row1"><span class="label">Clock Source</span><span class="status" id="rbTimeStatus"><span class="dot" id="dotTime"></span>--</span></div>
+          <div class="row2"><span class="value mono" id="rbTimeValue">--</span><span class="sub mono" id="rbBrowserClock">--:--:--</span></div>
+        </div>
+        <div class="ribbon-chip">
+          <div class="row1"><span class="label">Network</span><span class="status ok"><span class="dot ok"></span>AP UP</span></div>
+          <div class="row2"><span class="value mono" id="rbApSsid">--</span><span class="sub mono" id="rbApIp">--</span></div>
+        </div>
+      </div>
+
+      <div class="stepper-card">
+        <div class="stepper" id="processIndicator"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card" id="ampuleCardWrap">
+          <div class="card-head">
+            <h2>
+              <svg viewBox="0 0 24 24" fill="none"><path d="M9 2h6M10 2v5.2a3 3 0 0 1-.6 1.8L6.8 12.8A4 4 0 0 0 6 15.2V19a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-3.8a4 4 0 0 0-.8-2.4l-2.6-3.8a3 3 0 0 1-.6-1.8V2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Active Ampule
+            </h2>
+            <span class="live-chip idle" id="ampuleLiveChip"><span class="blink-dot"></span>IDLE</span>
+          </div>
+          <div class="card-body" id="ampuleCard"></div>
+          <div class="card-foot">
+            <span>SESSION DATA &mdash; DEMO MODE</span>
+            <span id="ampuleFootRight">&mdash;</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 12h12M6 12a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1M18 12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-1M8 6V4h8v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Weight &amp; Demo Dose
+            </h2>
+            <span class="live-chip idle" id="weightLiveChip">4 CATEGORIES</span>
+          </div>
+          <div class="card-body" id="weightCard"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="1.6"/><path d="M8 9l3 3-3 3M13 15h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            System Event Log
+          </h2>
+          <span class="live-chip"><span class="blink-dot"></span>LIVE</span>
+        </div>
+        <ul class="terminal" id="activityLog"><li class="empty-note">No activity yet.</li></ul>
+        <div class="card-foot">
+          <span id="logCountFoot">0 / 50 entries</span>
+          <span id="uptimeFoot">uptime --</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================= HISTORY ============================= -->
+    <section id="tab-history" class="tab-panel">
+      <div class="card">
+        <div class="card-head">
+          <h2>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 1 0 3-6.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3 4v5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8v4l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Ampule History
+          </h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Time</th><th>RFID UID</th><th>Medicine</th><th>Weight</th><th>Dose</th><th>Status</th></tr>
+            </thead>
+            <tbody id="historyBody">
+              <tr><td colspan="6" class="empty-note">No history yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ MEDICINES ============================ -->
+    <section id="tab-medicines" class="tab-panel">
+      <div class="card demo-config-banner">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 16.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10.3 3.9 2.5 17a1.8 1.8 0 0 0 1.6 2.7h15.8a1.8 1.8 0 0 0 1.6-2.7L13.7 3.9a1.8 1.8 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <span>DEMO CONFIGURATION &mdash; these are placeholder dose values for software testing only. Not medical dosing guidance.</span>
+      </div>
+      <div class="grid-3" id="medicineForms"></div>
+    </section>
+
+    <!-- ============================ SETTINGS ============================= -->
+    <section id="tab-settings" class="tab-panel">
+
+      <div class="card">
+        <div class="card-head">
+          <h2>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Register New Ampule
+          </h2>
+        </div>
+        <div class="card-body">
+          <form id="addAmpuleForm">
+            <div class="form-grid">
+              <div>
+                <label for="newUid">RFID UID</label>
+                <input id="newUid" placeholder="e.g. A1B2C3D4" required>
+              </div>
+              <div>
+                <label for="newMedicine">Medicine</label>
+                <select id="newMedicine" required></select>
+              </div>
+              <div>
+                <label for="newBatch">Batch Number</label>
+                <input id="newBatch" placeholder="e.g. PCM002">
+              </div>
+              <div>
+                <label for="newExpiry">Expiry Date</label>
+                <input id="newExpiry" type="date" required>
+              </div>
+              <div>
+                <label for="newPinAdd">Admin PIN</label>
+                <input id="newPinAdd" type="password" required>
+              </div>
+            </div>
+            <button class="btn primary" type="submit">Add Ampule</button>
+            <div class="form-msg" id="addAmpuleMsg"></div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M8 4v16" stroke="currentColor" stroke-width="1.8"/></svg>
+            Registered Ampules
+          </h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>RFID UID</th><th>Medicine</th><th>Batch</th><th>Expiry</th><th>Used</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="ampuleBody"><tr><td colspan="6" class="empty-note">Loading&hellip;</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 13a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V19a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H4a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.5V4a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.5 1H20a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            System Settings
+          </h2>
+        </div>
+        <div class="card-body">
+          <form id="settingsForm">
+            <div class="form-grid">
+              <div>
+                <label for="apSsid">Access Point SSID</label>
+                <input id="apSsid" placeholder="AMPule-System">
+              </div>
+              <div>
+                <label for="apPassword">Access Point Password</label>
+                <input id="apPassword" type="password" placeholder="Leave blank to keep current">
+              </div>
+              <div>
+                <label for="staSsid">Optional: Wi-Fi SSID for NTP time sync</label>
+                <input id="staSsid" placeholder="Leave blank to stay fully offline">
+              </div>
+              <div>
+                <label for="staPassword">Wi-Fi Password</label>
+                <input id="staPassword" type="password" placeholder="Leave blank to keep current">
+              </div>
+              <div>
+                <label for="newAdminPin">New Admin PIN</label>
+                <input id="newAdminPin" placeholder="Leave blank to keep current">
+              </div>
+              <div>
+                <label for="settingsPin">Current Admin PIN (required)</label>
+                <input id="settingsPin" type="password" required>
+              </div>
+            </div>
+            <button class="btn primary" type="submit">Save Settings</button>
+            <div class="form-msg" id="settingsMsg"></div>
+            <p class="control-hint">Wi-Fi changes take effect after the ESP32 reboots. The admin PIN gates every configuration change below and above &mdash; this is a local prototype safeguard, not production-grade authentication.</p>
+          </form>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer id="footer">AMPule System &mdash; Prototype. Not for clinical use.</footer>
+
+</div>
+<script src="/app.js"></script>
+</body>
+</html>
